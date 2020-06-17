@@ -129,101 +129,101 @@ mapview(dat,
 
 
 
-# Housing Density {.tabset}
+<!-- # Housing Density {.tabset} -->
 
-## Single family/sqmi
+<!-- ## Single family/sqmi -->
 
-The number of non-vacant single family homes per square mile
-```{r, echo=FALSE}
-mapview(dat, zcol = "single_fam_per_sqmi")
-```
-
-<!-- ## Multi-family/sqmi -->
-
-<!-- The number of non-vacant multi-family (2-3 unit) homes per square mile -->
+<!-- The number of non-vacant single family homes per square mile -->
 <!-- ```{r, echo=FALSE} -->
-<!-- mapview(dat, zcol = "multi_fam_per_sqmi") -->
+<!-- mapview(dat, zcol = "single_fam_per_sqmi") -->
 <!-- ``` -->
 
+<!-- <!-- ## Multi-family/sqmi --> -->
+
+<!-- <!-- The number of non-vacant multi-family (2-3 unit) homes per square mile --> -->
+<!-- <!-- ```{r, echo=FALSE} --> -->
+<!-- <!-- mapview(dat, zcol = "multi_fam_per_sqmi") --> -->
+<!-- <!-- ``` --> -->
 
 
-# Housing market velocity {.tabset}
 
-The percent of residential properties with a recent (2017-19) sale
+<!-- # Housing market velocity {.tabset} -->
 
-## All residential
-```{r, echo=FALSE}
-mapview(dat[dat$pct_all_w_sale < 50,], 
-        zcol = "pct_all_w_sale", 
-        layer.name = "pct_all_w_sale")
-```
+<!-- The percent of residential properties with a recent (2017-19) sale -->
 
-## Single family
-```{r, echo=FALSE}
-mapview(dat, 
-        zcol = "pct_single_fam_w_sale", 
-        layer.name = "pct_single_fam_w_sale")
-```
+<!-- ## All residential -->
+<!-- ```{r, echo=FALSE} -->
+<!-- mapview(dat[dat$pct_all_w_sale < 50,],  -->
+<!--         zcol = "pct_all_w_sale",  -->
+<!--         layer.name = "pct_all_w_sale") -->
+<!-- ``` -->
 
-<!-- ## Multi-family -->
+<!-- ## Single family -->
 <!-- ```{r, echo=FALSE} -->
 <!-- mapview(dat,  -->
-<!--         zcol = "pct_multi_fam_w_sale",  -->
-<!--         layer.name = "pct_multi_fam_w_sale") -->
+<!--         zcol = "pct_single_fam_w_sale",  -->
+<!--         layer.name = "pct_single_fam_w_sale") -->
 <!-- ``` -->
 
-
-
-# Housing prices {.tabset}
-
-## 2017
-Median sale price per square foot of single family homes in: 
-
-```{r, echo=FALSE}
-mapview(dat_sf, 
-        zcol = "med_sfprice_per_sqft17", 
-        layer.name = "med_sfprice_per_sqft17")
-```
+<!-- <!-- ## Multi-family --> -->
+<!-- <!-- ```{r, echo=FALSE} --> -->
+<!-- <!-- mapview(dat,  --> -->
+<!-- <!--         zcol = "pct_multi_fam_w_sale",  --> -->
+<!-- <!--         layer.name = "pct_multi_fam_w_sale") --> -->
+<!-- <!-- ``` --> -->
 
 
 
-<!-- ## 2018 -->
+<!-- # Housing prices {.tabset} -->
+
+<!-- ## 2017 -->
 <!-- Median sale price per square foot of single family homes in:  -->
 
 <!-- ```{r, echo=FALSE} -->
 <!-- mapview(dat_sf,  -->
-<!--         zcol = "med_sfprice_per_sqft18",  -->
-<!--         layer.name = "med_sfprice_per_sqft18") -->
+<!--         zcol = "med_sfprice_per_sqft17",  -->
+<!--         layer.name = "med_sfprice_per_sqft17") -->
 <!-- ``` -->
 
 
-## 2019
-Median sale price per square foot of single family homes in: 
 
-```{r, echo=FALSE}
-mapview(dat_sf, 
-        zcol = "med_sfprice_per_sqft19", 
-        layer.name = "med_sfprice_per_sqft19")
-```
+<!-- <!-- ## 2018 --> -->
+<!-- <!-- Median sale price per square foot of single family homes in:  --> -->
 
-
-## 2017 vs. 2019
-Percentage change in median sale price per square foot from 2017 to 2019
-```{r, echo=FALSE}
-mapview(dat_sf, 
-        zcol = "persf_pct_ch2", 
-        layer.name = "persf_pct_ch2")
-```
+<!-- <!-- ```{r, echo=FALSE} --> -->
+<!-- <!-- mapview(dat_sf,  --> -->
+<!-- <!--         zcol = "med_sfprice_per_sqft18",  --> -->
+<!-- <!--         layer.name = "med_sfprice_per_sqft18") --> -->
+<!-- <!-- ``` --> -->
 
 
-## 2017 vs. 2019 rank
+<!-- ## 2019 -->
+<!-- Median sale price per square foot of single family homes in:  -->
 
-Percentile rank of the change in median sale price per square foot from 2017 to 2019
-```{r, echo=FALSE}
-mapview(dat_sf, 
-        zcol = "persf_pct_ch_rank", 
-        layer.name = "persf_pct_ch_rank")
-```
+<!-- ```{r, echo=FALSE} -->
+<!-- mapview(dat_sf,  -->
+<!--         zcol = "med_sfprice_per_sqft19",  -->
+<!--         layer.name = "med_sfprice_per_sqft19") -->
+<!-- ``` -->
+
+
+<!-- ## 2017 vs. 2019 -->
+<!-- Percentage change in median sale price per square foot from 2017 to 2019 -->
+<!-- ```{r, echo=FALSE} -->
+<!-- mapview(dat_sf,  -->
+<!--         zcol = "persf_pct_ch2",  -->
+<!--         layer.name = "persf_pct_ch2") -->
+<!-- ``` -->
+
+
+<!-- ## 2017 vs. 2019 rank -->
+
+<!-- Percentile rank of the change in median sale price per square foot from 2017 to 2019 -->
+<!-- ```{r, echo=FALSE} -->
+<!-- mapview(dat_sf,  -->
+<!--         zcol = "persf_pct_ch_rank",  -->
+<!--         layer.name = "persf_pct_ch_rank") -->
+<!-- ``` -->
 
 
 
