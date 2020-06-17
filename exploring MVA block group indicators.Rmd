@@ -1,0 +1,230 @@
+---
+title: "MVA- DRAFT"
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
+output: html_document
+---
+
+__NOT FOR DISSEMINATION__
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+# library(vroom)
+# library(lubridate)
+# library(mclust)
+# library(psych)
+library(mapview)
+library(tidycensus)
+library(sf)
+library(readr)
+
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+# map <- get_acs(
+#   geography = "block group",
+#   variables = c(medincome = 'B06011_001'),
+#   state = "OH",
+#   county = "Cuyahoga",
+#   geometry = TRUE)
+# 
+# map <- map %>%
+#   rename(blockgr10 = GEOID) %>%
+#   select(blockgr10)
+# 
+# st_write(map, here::here("data", "mva_map.shp"))
+```
+
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+dat <- read_csv(here::here("data", "mva17to19_analysis_x.csv"))
+dat <- dat %>%
+  mutate(blockgr10 = as.character(blockgr10)) %>%
+  filter(blockgr10 != "390359999000")
+
+map <- st_read(here::here("data", "mva_map.shp"))
+
+dat <- map %>%
+  right_join(dat)
+
+rm(map)
+
+
+
+```
+
+
+
+```{r, include=FALSE}
+dat <- dat %>% 
+  mutate(pct_single_fam = sfpar / rs * 100, 
+         pct_multi_fam = mfpar / rs * 100, 
+         pct_condos = cdpar / rs * 100, 
+         pct_other_res = othpar / rs * 100, 
+         pct_all_w_sale = gt1_alsales / rs * 100, 
+         pct_single_fam_w_sale = gt1_sfsales / rs * 100, 
+         pct_multi_fam_w_sale = gt1_mfsales / rs * 100, 
+         res_per_sqmi = rs / area10, 
+         single_fam_per_sqmi = sfpar / area10, 
+         multi_fam_per_sqmi = mfpar / area10
+         
+         
+         )
+
+
+dat_sf <- dat %>% 
+  filter(n_sales_17 > 0 & n_sales_18 > 0 & n_sales_19 > 0) %>% 
+  mutate(
+    persf_pct_ch = ((med_sfprice_per_sqft19 - med_sfprice_per_sqft17) / med_sfprice_per_sqft17)*100,
+    persf_pct_ch2 = case_when(
+      persf_pct_ch >= 100 ~ 100, 
+      persf_pct_ch <= -50 ~ -50,
+      TRUE ~ persf_pct_ch),
+    persf_pct_ch_rank = percent_rank((med_sfprice_per_sqft19 - med_sfprice_per_sqft17) / med_sfprice_per_sqft17),
+    sale_persf_rank17 = min_rank(med_sfprice_per_sqft17),
+    sale_persf_rank18 = min_rank(med_sfprice_per_sqft18),
+    sale_persf_rank19 = min_rank(med_sfprice_per_sqft19),
+    persf_rank_ch = sale_persf_rank19 - sale_persf_rank17
+  )
+
+
+
+
+```
+
+
+# Housing Type {.tabset}
+
+The percent of non-vacant residential parcels that are: 
+
+
+
+## Single family
+```{r, echo=FALSE}
+mapview(dat,
+        zcol = "pct_single_fam",
+        layer.name = "pct_single_fam")
+```
+
+## Multi family
+```{r, echo=FALSE}
+mapview(dat,
+        zcol = "pct_multi_fam",
+        layer.name = "pct_multi_fam")
+```
+
+## Condos
+```{r, echo=FALSE}
+mapview(dat,
+        zcol = "pct_condos",
+        layer.name = "pct_condos")
+```
+
+
+
+# Housing Density {.tabset}
+
+## Single family/sqmi
+
+The number of non-vacant single family homes per square mile
+```{r, echo=FALSE}
+mapview(dat, zcol = "single_fam_per_sqmi")
+```
+
+<!-- ## Multi-family/sqmi -->
+
+<!-- The number of non-vacant multi-family (2-3 unit) homes per square mile -->
+<!-- ```{r, echo=FALSE} -->
+<!-- mapview(dat, zcol = "multi_fam_per_sqmi") -->
+<!-- ``` -->
+
+
+
+# Housing market velocity {.tabset}
+
+The percent of residential properties with a recent (2017-19) sale
+
+## All residential
+```{r, echo=FALSE}
+mapview(dat[dat$pct_all_w_sale < 50,], 
+        zcol = "pct_all_w_sale", 
+        layer.name = "pct_all_w_sale")
+```
+
+## Single family
+```{r, echo=FALSE}
+mapview(dat, 
+        zcol = "pct_single_fam_w_sale", 
+        layer.name = "pct_single_fam_w_sale")
+```
+
+<!-- ## Multi-family -->
+<!-- ```{r, echo=FALSE} -->
+<!-- mapview(dat,  -->
+<!--         zcol = "pct_multi_fam_w_sale",  -->
+<!--         layer.name = "pct_multi_fam_w_sale") -->
+<!-- ``` -->
+
+
+
+# Housing prices {.tabset}
+
+## 2017
+Median sale price per square foot of single family homes in: 
+
+```{r, echo=FALSE}
+mapview(dat_sf, 
+        zcol = "med_sfprice_per_sqft17", 
+        layer.name = "med_sfprice_per_sqft17")
+```
+
+
+
+<!-- ## 2018 -->
+<!-- Median sale price per square foot of single family homes in:  -->
+
+<!-- ```{r, echo=FALSE} -->
+<!-- mapview(dat_sf,  -->
+<!--         zcol = "med_sfprice_per_sqft18",  -->
+<!--         layer.name = "med_sfprice_per_sqft18") -->
+<!-- ``` -->
+
+
+## 2019
+Median sale price per square foot of single family homes in: 
+
+```{r, echo=FALSE}
+mapview(dat_sf, 
+        zcol = "med_sfprice_per_sqft19", 
+        layer.name = "med_sfprice_per_sqft19")
+```
+
+
+## 2017 vs. 2019
+Percentage change in median sale price per square foot from 2017 to 2019
+```{r, echo=FALSE}
+mapview(dat_sf, 
+        zcol = "persf_pct_ch2", 
+        layer.name = "persf_pct_ch2")
+```
+
+
+## 2017 vs. 2019 rank
+
+Percentile rank of the change in median sale price per square foot from 2017 to 2019
+```{r, echo=FALSE}
+mapview(dat_sf, 
+        zcol = "persf_pct_ch_rank", 
+        layer.name = "persf_pct_ch_rank")
+```
+
+
+
+
