@@ -1,0 +1,109 @@
+---
+title: "MVA- DRAFT- Housing Density"
+---
+
+__NOT FOR DISSEMINATION__
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+# library(vroom)
+# library(lubridate)
+# library(mclust)
+# library(psych)
+library(mapview)
+library(tidycensus)
+library(sf)
+library(readr)
+
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+dat <- read_csv(here::here("data", "mva17to19_analysis_x.csv"))
+dat <- dat %>%
+  mutate(blockgr10 = as.character(blockgr10)) %>%
+  filter(blockgr10 != "390359999000")
+
+map <- st_read(here::here("data", "mva_map.shp"))
+
+dat <- map %>%
+  right_join(dat)
+
+rm(map)
+
+
+
+```
+
+
+
+```{r, include=FALSE}
+dat <- dat %>% 
+  mutate(pct_single_fam = sfpar / rs * 100, 
+         pct_multi_fam = mfpar / rs * 100, 
+         pct_condos = cdpar / rs * 100, 
+         pct_other_res = othpar / rs * 100, 
+         pct_all_w_sale = gt1_alsales / rs * 100, 
+         pct_single_fam_w_sale = gt1_sfsales / rs * 100, 
+         pct_multi_fam_w_sale = gt1_mfsales / rs * 100, 
+         res_per_sqmi = rs / area10, 
+         single_fam_per_sqmi = sfpar / area10, 
+         multi_fam_per_sqmi = mfpar / area10
+         
+         
+         )
+
+
+dat_sf <- dat %>% 
+  filter(n_sales_17 > 0 & n_sales_18 > 0 & n_sales_19 > 0) %>% 
+  mutate(
+    persf_pct_ch = ((med_sfprice_per_sqft19 - med_sfprice_per_sqft17) / med_sfprice_per_sqft17)*100,
+    persf_pct_ch2 = case_when(
+      persf_pct_ch >= 100 ~ 100, 
+      persf_pct_ch <= -50 ~ -50,
+      TRUE ~ persf_pct_ch),
+    persf_pct_ch_rank = percent_rank((med_sfprice_per_sqft19 - med_sfprice_per_sqft17) / med_sfprice_per_sqft17),
+    sale_persf_rank17 = min_rank(med_sfprice_per_sqft17),
+    sale_persf_rank18 = min_rank(med_sfprice_per_sqft18),
+    sale_persf_rank19 = min_rank(med_sfprice_per_sqft19),
+    persf_rank_ch = sale_persf_rank19 - sale_persf_rank17
+  )
+
+
+
+
+```
+
+
+
+
+
+# Housing market velocity {.tabset}
+
+The percent of residential properties with a recent (2017-19) sale
+
+## All residential
+```{r, echo=FALSE}
+mapview(dat[dat$pct_all_w_sale < 50,],
+        zcol = "pct_all_w_sale",
+        layer.name = "pct_all_w_sale")
+```
+
+## Single family
+```{r, echo=FALSE}
+mapview(dat,
+        zcol = "pct_single_fam_w_sale",
+        layer.name = "pct_single_fam_w_sale")
+```
+
+## Multi-family
+```{r, echo=FALSE}
+mapview(dat,
+        zcol = "pct_multi_fam_w_sale",
+        layer.name = "pct_multi_fam_w_sale")
+```
+
+
+
