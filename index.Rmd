@@ -1,0 +1,8 @@
+---
+title: "Introduction"
+author: "Mike"
+date: "6/17/2020"
+output: html_document
+---
+
+This site shows a series of interactive maps for exploring various dimensions of the Cleveland housing market.
