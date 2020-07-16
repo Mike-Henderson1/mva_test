@@ -5,6 +5,6 @@ navbar:
     - text: "Home"
       href: index.html
     - text: "Housing Type"
-      href: exploring_mva.html
+      href: _site/exploring_mva.html
     - text: "Velocity"
-      href: velocity.html
+      href: _site/velocity.html
